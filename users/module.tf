@@ -22,14 +22,19 @@ resource "aws_iam_group" "group" {
   name = "${var.group_name}"
 }
 
-resource "aws_iam_group_policy_attachment" "group-policy" {
+resource "aws_iam_group_policy_attachment" "group_policy_system_administrator" {
   group = "${aws_iam_group.group.name}"
   policy_arn = "arn:aws:iam::aws:policy/job-function/SystemAdministrator"
 }
 
-resource "aws_iam_group_policy_attachment" "group-policy-update-credentials" {
+resource "aws_iam_group_policy_attachment" "group_policy_update_credentials" {
   group = "${aws_iam_group.group.name}"
-  policy_arn = "arn:aws:iam::801771690413:policy/IAMUpdateCredentials"
+  policy_arn = "${aws_iam_policy.policy_update_credentials.arn}"
+}
+
+resource "aws_iam_policy" "policy_update_credentials" {
+  name = "IAMUpdateCredentials"
+  policy = "${file("${path.module}/update-credentials.json")}"
 }
 
 resource "aws_iam_group_membership" "members" {
